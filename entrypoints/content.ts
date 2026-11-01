@@ -31,7 +31,17 @@ export default defineContentScript({
       .sort((a, b) => b.solved - a.solved)
       .slice(0, 5);
 
+    if (problems.length === 0) return;
+
+    const content = document.querySelector("div.content");
     const heading = document.createElement("h2");
+
+    if (top5.length === 0) {
+      heading.textContent = "All solved!";
+      content?.prepend(heading);
+      return;
+    }
+
     heading.textContent = `Next ${top5.length} problems`;
 
     const list = document.createElement("ul");
@@ -40,6 +50,6 @@ export default defineContentScript({
       list.append(problem.row.cloneNode(true));
     }
 
-    document.querySelector("div.content")?.prepend(heading, list);
+    content?.prepend(heading, list);
   },
 });

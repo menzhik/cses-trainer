@@ -3,10 +3,11 @@ type Problem = {
   url: string;
   solved: number;
   done: boolean;
+  row: Element;
 };
 
 export default defineContentScript({
-  matches: ["https://cses.fi/problemset/"],
+  matches: ["https://cses.fi/problemset/", "https://cses.fi/problemset/list*"],
   main() {
     const rows = document.querySelectorAll("li.task");
 
@@ -21,6 +22,7 @@ export default defineContentScript({
         url: link.href,
         solved: Number(detail.textContent.split("/")[0]),
         done: row.querySelector("span.task-score")?.classList.contains("full") ?? false,
+        row,
       });
     }
 
@@ -29,10 +31,15 @@ export default defineContentScript({
       .sort((a, b) => b.solved - a.solved)
       .slice(0, 5);
 
-    for (const [i, problem] of top5.entries()) {
-      console.log(
-        `cses-trainer: ${i + 1}. ${problem.title} (${problem.solved} solved) ${problem.url}`,
-      );
+    const heading = document.createElement("h2");
+    heading.textContent = `Next ${top5.length} problems`;
+
+    const list = document.createElement("ul");
+    list.className = "task-list";
+    for (const problem of top5) {
+      list.append(problem.row.cloneNode(true));
     }
+
+    document.querySelector("div.content")?.prepend(heading, list);
   },
 });

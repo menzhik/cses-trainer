@@ -1,6 +1,6 @@
 {
   "name": "cses-trainer",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Shows your next 5 unsolved CSES problems, ranked by how many people solved them.",
   "type": "module",
